@@ -1,7 +1,6 @@
 import data
 class QuizBrain:
     def __init__(self):
-        self.total_questions = len(data.question_list)
         self.current_question = data.question_list[0]
         self.index_of_current = 0
 

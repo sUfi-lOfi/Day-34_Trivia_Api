@@ -1,11 +1,9 @@
 from tkinter import *
-import requests
-import random
-
 class FlashCard:
     def __init__(self,quiz_brain):
         self.quiz_brain = quiz_brain
         # -------------------- UI Setup -------------------- #
+        self.timer = None
         self.BACKGROUND_COLOR = "#B1DDC6"
         self.window = Tk()
         self.window.title("Flash Card App")
@@ -57,21 +55,28 @@ class FlashCard:
         if self.quiz_brain.current_question["correct_answer"] == "False":
             self.score += 1
             self.score_label.config(text=f"Score : {self.score}")
+        else:
+            self.wrong_answer()
         if self.quiz_brain.next_question():
-            self.update_interface()
+            self.timer = self.window.after(1000,self.update_interface)
         else:
             self.end_quiz()
     def right_pressed(self):
         if self.quiz_brain.current_question["correct_answer"] == "True":
             self.score += 1
             self.score_label.config(text = f"Score : {self.score}")
+        else:
+            self.wrong_answer()
         if self.quiz_brain.next_question():
-            self.update_interface()
+            self.timer = self.window.after(1000,self.update_interface)
         else:
             self.end_quiz()
-
-
+    def wrong_answer(self):
+        self.canvas.config(bg="#FF0000")
     def update_interface(self):
+        if self.timer:
+            self.window.after_cancel(self.timer)
+        self.canvas.config(bg="#FFFFFF")
         self.canvas.itemconfig(self.canvas_text,text = f"Q{self.quiz_brain.index_of_current + 1} : {self.quiz_brain.current_question["question"]}")
     def end_quiz(self):
         self.canvas.itemconfig(self.canvas_text,text = f"Questions Ended!!\nFinal Score is {self.score}")
